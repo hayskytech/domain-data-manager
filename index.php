@@ -26,19 +26,19 @@ function filter_wir(){ include 'filter.php'; }
 /* -- GitHub Updater -- */
 add_action( "init", function(){
     if ( is_admin() ) {
-    $updater_file = dirname(__FILE__)."/github_updater.php";
-    if (file_exists($updater_file)) {
-        include $updater_file;
-    } else {
-        $ch = curl_init("https://raw.githubusercontent.com/radishconcepts/WordPress-GitHub-Plugin-Updater/master/updater.php");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        $src = curl_exec($ch);
-        curl_close($ch);
-        file_put_contents($updater_file, $src);
-        include $updater_file;
-    }
-    define( "WP_GITHUB_FORCE_UPDATE", true );
+        $updater_file = dirname(__FILE__)."/github_updater.php";
+        if (file_exists($updater_file)) {
+            include $updater_file;
+        } else {
+            $ch = curl_init("https://raw.githubusercontent.com/radishconcepts/WordPress-GitHub-Plugin-Updater/master/updater.php");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            $src = curl_exec($ch);
+            curl_close($ch);
+            file_put_contents($updater_file, $src);
+            include $updater_file;
+        }
+        define( "WP_GITHUB_FORCE_UPDATE", true );
         $config = array(
             "slug" => plugin_basename( __FILE__ ),
             "proper_folder_name" => explode("/",plugin_basename( __FILE__ ))[0],
