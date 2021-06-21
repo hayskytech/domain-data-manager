@@ -23,36 +23,22 @@ function message_wal(){ include 'message.php'; }
 function num_wir(){ include 'domain_list.php'; }
 function filter_wir(){ include 'filter.php'; }
 
-/* -- GitHub Updater -- */
+
 add_action( "init", function(){
     if ( is_admin() ) {
-        $updater_file = dirname(__FILE__)."/github_updater.php";
-        if (file_exists($updater_file)) {
-            include $updater_file;
-        } else {
-            $ch = curl_init("https://raw.githubusercontent.com/radishconcepts/WordPress-GitHub-Plugin-Updater/master/updater.php");
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HEADER, 0);
-            $src = curl_exec($ch);
-            curl_close($ch);
-            file_put_contents($updater_file, $src);
+        if( !class_exists( "Smashing_Updater" ) ){
+            $updater_file = dirname( __FILE__ ) . "/github_updater.php";
+            if (!file_exists($updater_file)) {
+                $src = file_get_contents( "https://raw.githubusercontent.com/rayman813/smashing-updater-plugin/master/updater.php" );
+                file_put_contents($updater_file, $src);
+            }
             include $updater_file;
         }
-        define( "WP_GITHUB_FORCE_UPDATE", true );
-        $config = array(
-            "slug" => plugin_basename( __FILE__ ),
-            "proper_folder_name" => explode("/",plugin_basename( __FILE__ ))[0],
-            "api_url" => "https://api.github.com/repos/hayskytech/domain-data-manager",
-            "raw_url" => "https://raw.github.com/hayskytech/domain-data-manager/master",
-            "github_url" => "https://github.com/hayskytech/domain-data-manager",
-            "zip_url" => "https://github.com/hayskytech/domain-data-manager/archive/master.zip",
-            "sslverify" => true,
-            "requires" => "3.0",
-            "tested" => "3.3",
-            "readme" => "README.md",
-            "access_token" => "",
-        );
-        new WP_GitHub_Updater( $config );
+        $updater = new Smashing_Updater( __FILE__ );
+        $updater->set_username( "hayskytech" );
+        $updater->set_repository( "domain-data-manager" );
+        // $updater->authorize( "abcdefghijk1234567890" ); // Your auth code goes here for private repos
+        $updater->initialize();
     }
 });
 ?>
